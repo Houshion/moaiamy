@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>优惠券</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <link rel="stylesheet" type="text/css" href="../css/swiper.min.css" />
+    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../css/dropload.css" />
+    <script type="text/javascript" src="../js/adaptive.js"></script>
+    <script>
+    window['adaptive'].desinWidth = 750;
+    window['adaptive'].baseFont = 28;
+    window['adaptive'].init();
+    </script>
+    <style type="text/css">
+    .coupon_container ul li {
+        position: relative;
+        margin-top: .2rem;
+    }
+
+    .coupon_container ul li:first-child {
+        position: relative;
+        margin-top: 0;
+    }
+
+    .coupon_ib {
+        position: absolute;
+        width: 88%;
+        height: calc(100% - 30px);
+        top: 0;
+        left: 0;
+        padding: 0 .4rem;
+    }
+
+    .dy1 .c1 {
+        color: blue;
+        margin-top: .2rem;
+    }
+
+    .dy1 .c2 {
+        color: #ffa795;
+    }
+
+    .dy2 .c1 {
+        color: red;
+        margin-top: .2rem;
+    }
+
+    .dy2 .c2 {
+        color: #ffa795;
+    }
+
+    .dy3 .c1 {
+        color: #999;
+        margin-top: .2rem;
+    }
+
+    .dy3 .c2 {
+        color: #999;
+    }
+
+    .dhm_container {
+        display: flex;
+        width: 7.02rem;
+        line-height: 1rem;
+        height: 1rem;
+        background: #fff;
+        border-radius: .1rem;
+        margin: 0.2rem auto;
+        justify-content: center;
+        align-items: center;
+    }
+
+    input {
+        width: 5.88rem;
+        height: 1rem;
+        margin-left: .2rem;
+    }
+
+    .c_btn {
+        background: #fff;
+        color: #ffa596;
+        width: 1.14rem;
+        text-align: center;
+    }
+    .line1{
+        width: 1px;
+        height: .65rem;
+        background: #ccc;
+    }
+    </style>
+</head>
+
+<body>
+    <!-- <div class="dhm_container">
+        <input type="text" class="bindCoupon" name="bindCoupon" placeholder="请输入兑换码" />
+       <b class="line1"></b> <button class="c_btn">兑换</button>
+    </div> -->
+    <div class="container plr24 mt20 coupon_container">
+        <ul class="list">
+            <!--   <li class="bw dy1" style="height: 120%">
+                <img src="../img/bg_5.png"  style="width:100%"/>
+                <div class="coupon_ib flex_a flex-sb">
+                    <p class="font80 colw">0折</p>
+                    <ul class="flex flex-column">
+                        <p class="colw">合适放松项目券</p>
+                        <p class="c1">仅限合适放松项目使用</p>
+                    </ul>
+                </div>
+                <p class="col9 p30 flex_a flex-sb">有效期：2017-01-01</p>
+            </li>
+            <li class="bw dy2" style="height: 120%">
+                <img src="../img/bg_6.png"  style="width:100%"/>
+                <div class="coupon_ib flex_a flex-sb">
+                    <p class="font80 colw">0折</p>
+                    <ul class="flex flex-column">
+                        <p class="colw">合适放松项目券</p>
+                        <p class="c1">仅限合适放松项目使用</p>
+                    </ul>
+                </div>
+                <p class="col9 p30 flex_a flex-sb">有效期：2017-01-01</p>
+            </li>  -->
+        </ul>
+    </div>
+</body>
+
+</html>
+<script src="../js/jquery-3.2.1.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/dlc.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/swiper.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/dropload.min.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript">
+$(function() {
+    // 兑换码
+    $('.c_btn').click(function () {
+        dlc_request('Wxsite/Hardware/api',{api_name:'bindCoupon',code:$('.bindCoupon').val()},function (res) {
+            console.log(res);
+            if (res.code == 1) {
+                dlctipbox.show(res.msg);
+                location.reload();
+            }else{
+                dlctipbox.show(res.msg);
+            }
+        })
+    })
+    //获取优惠券
+    dlc_request('Wxsite/Order/api', { api_name: 'myCoupon', user_id: getUrlParam('user_id'), item_id: getUrlParam('item_id') }, function(res) {
+        console.log(res)
+        var str = '';
+        if (res.code == '1') {
+            for (var i in res.data) {
+                // console.log(res.data[i])
+                if (res.data[i].status == 1) {
+                    str += '<li class="bw dy1" style="height: 120%" data-id=' + res.data[i].id + ' data-reduce_money="' + res.data[i].reduce_money + '">' +
+                        '<img src="../img/bg_5.png" style="width:100%">' +
+                        '<div class="coupon_ib flex_a flex-sb">' +
+                        '<p class="font80 colw">' + (res.data[i].type == 1 ? res.data[i].discounts + '折' : res.data[i].reduce_money + '元') + '</p>' +
+                        '<ul class="flex_e flex-column">' +
+                        ' <p class="colw">' + res.data[i].item_name + '</p>' +
+                        '<p class="c1">' + res.data[i].coupon_name + '</p>' +
+                        '</ul>' +
+                        '</div>' +
+                        ' <p class="col9 p30 flex_a flex-sb">有效期：' + format(res.data[i].valid_time, 'Y-m-d') + '</p>' +
+                        '</li>';
+                } else {
+                    $('.list').html(emptyTip('暂无可用优惠券'));
+                }
+            }
+            if (str) {
+                $('.list').html(str);
+            } else {
+                $('.list').html(emptyTip('暂无优惠券'));
+            }
+        }
+    })
+
+    $('.list').on('click', 'li', function() {
+        var that = $(this);
+        dlc_request('Wxsite/Hardware/api', { api_name: 'useCoupon', money: getUrlParam('num_money'), coupon_id: $(this).data('id') }, function(res) {
+            console.log(res);
+            if (res.code == 1) {
+                console.log($(that).data('id'))
+                console.log($(that).data('reduce_money'))
+                location.href = 'y_confirm.html?coupon_id=' + $(that).data('id') + '&user_id=' + getUrlParam('user_id') + '&item_id=' + getUrlParam('item_id') + '&macno=' + getUrlParam('macno') + '&reduce_money=' + $(that).data('reduce_money');
+            } else {
+                dlctipbox.show(res.msg);
+            }
+        }, false)
+
+    })
+
+})
+</script>

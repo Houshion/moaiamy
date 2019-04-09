@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>充值结果</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-
+scale=1, user-scalable=no">
+    <link rel="stylesheet" type="text/css" href="../css/swiper.min.css" />
+    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+    <script type="text/javascript" src="../js/adaptive.js"></script>
+    <script>
+    window['adaptive'].desinWidth = 750;
+    window['adaptive'].baseFont = 28;
+    window['adaptive'].init();
+    </script>
+    <style type="text/css">
+    .main_btn {
+        padding: .2rem .2rem;
+        color: #ffa795;
+        border: 1px solid #ffa795;
+        border-radius: 50px;
+        margin: .5rem auto;
+        width: 88%;
+    }
+    </style>
+</head>
+
+<body>
+    <!-- 失败的状态 -->
+    <div class="container type1" date-type='1' style="display: none;">
+        <p class="tac"><img class="mt100" src="../img/5.png" style="width: 2.74rem" /></p>
+        <p class="tac mt40 col9">充值失败</p>
+        <a href="javascript:history.go(-1)" class="main_btn flex">返回</a>
+    </div>
+    <!-- 成功的状态 -->
+    <div class="container type2" date-type='2' style="display: none;">
+        <p class="tac"><img class="mt100" src="../img/6.png" style="width: 2.74rem" /></p>
+        <p class="tac mt40 col9">充值成功</p>
+        <a href="Javascript:history.go(-1);void(0)" class="main_btn flex">返回</a>
+    </div>
+</body>
+
+</html>
+<script src="../js/jquery-3.2.1.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/dlc.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/swiper.min.js" type="text/javascript" charset="utf-8"></script>
+<!--公司的常用函数封装-->
+<script>
+$(function() {
+    if (getUrlParam('type') == 1) {
+        $('.type2').show()
+    } else {
+        $('.type1').show()
+    }
+})
+</script>

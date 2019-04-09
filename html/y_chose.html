@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>选择套餐</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <link rel="stylesheet" type="text/css" href="../css/swiper.min.css" />
+    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+    <script type="text/javascript" src="../js/adaptive.js"></script>
+    <script>
+    window['adaptive'].desinWidth = 750;
+    window['adaptive'].baseFont = 28;
+    window['adaptive'].init();
+    </script>
+    <style type="text/css">
+    /*swiper banner部分*/
+
+    .swiper-slide img {
+        max-width: 100%;
+    }
+
+    .swiper-pagination-bullet {
+        background: #ACB1A4;
+        opacity: 1;
+    }
+
+    .swiper-pagination-bullet-active {
+        opacity: 1;
+        background: #ffa795;
+    }
+    /*选择点击按钮*/
+
+    .agreement_checkbox {
+        width: .25rem;
+        height: .25rem;
+        background: #ffa795;
+        margin-left: .2rem;
+        margin-right: .2rem;
+    }
+
+    input[type="checkbox"]:checked+span {
+        background: url(../img/right.png) no-repeat center;
+    }
+    /*选择按钮*/
+
+    .chose_btn {
+        width: 3.41rem;
+        height: .88rem;
+        border-radius: 50px;
+        color: #fff;
+    }
+
+    .list {
+        flex: 1;
+        overflow-y: scroll;
+        -webkit-overflow-scrolling: touch;
+        overflow-scrolling: touch;
+        height: 3.6rem;
+    }
+
+    .list_a {
+        padding: .3rem;
+        display: flex;
+        align-items: center;
+        margin-top: .2rem;
+        border-radius: 0.1rem;
+        justify-content: space-between;
+    }
+    </style>
+</head>
+
+<body>
+    <div class="bigBox">
+        <div class="container plr24 mt20">
+            <!--swiper banner 开始-->
+            <div class="swiper-container">
+                <div class="swiper-wrapper">
+                    <!--     <div class="swiper-slide"><img src="../img/9.png"></div>
+                    <div class="swiper-slide"><img src="../img/bg_3.png"></div>
+                    <div class="swiper-slide"><img src="../img/bg_2.png"></div> -->
+                </div>
+                <!-- Add Pagination -->
+                <div class="swiper-pagination"></div>
+            </div>
+            <!--swiper banner 结束-->
+            <ul>
+                <p class="col9 lh60">选择套餐</p>
+                <div class="list">
+                    <!-- <a href="y_confirm.html" class="bw list_a tap">
+                        <p class="flex"><img src="../img/icon_1.png" style="width:0.4rem;"><span class="pl20">合适放松</span></p>
+                        <p class="color2">0元/0分钟</p>
+                    </a> -->
+                </div>
+                <label class="col9 mt20 flex_a">
+                    <p class="chose_label flex">
+                        <input type="checkbox" name="agreement" id="agreement" checked hidden />
+                        <span class="agreement_checkbox bw"></span>
+                    </p>
+                    确认支付即表示同意
+                    <a class="color2" href="y_instructions.html">《服务使用协议》</a></label>
+                <ul class="flex_a flex-sb user" style="margin-top: 1.76rem;">
+                    <a class="chose_btn btn flex bgc1 btn2">查看健康档案</a>
+                    <a href="y_center.html" class="chose_btn btn flex bgc2">我的</a>
+                </ul>
+            </ul>
+        </div>
+    </div>
+</body>
+
+</html>
+<script src="../js/jquery-3.2.1.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/dlc.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/swiper.min.js" type="text/javascript" charset="utf-8"></script>
+<!--公司的常用函数封装-->
+<script>
+$(function() {
+    var is_additem = 0;
+    getUrlParam('is_additem') == 1 ? is_additem = 1 : is_additem = 0;
+    console.log(is_additem)
+    var macno = getUrlParam('macno').split(',')[0];
+    if (localStorage.getItem('macno')) {} else {
+        localStorage.setItem('macno', macno);
+    }
+    var user_id;
+    dlc_request('Wxsite/home/index', { api_name: 'getUser' }, function(res) {
+        console.log(res)
+        if (res.code == 1) {
+            // alert(JSON.stringify(res))
+            user_id = res.data.user_id;
+            localStorage.setItem('user_id', res.data.user_id);
+            $.ajax({
+                type: 'POST',
+                url: dlcUrl() + 'Wxsite/Order/api',
+                data: { api_name: 'checkedCombo', macno: macno, is_additem: is_additem },
+                dataType: 'json',
+                success: function(res) {
+                    if (res.code == 1) {
+                        console.log(res);
+                        // banner部分
+                        var str = '';
+                        for (var j = 0; j < res.data.banner.length; j++) {
+                            str += '<div class="swiper-slide"><a href="'+res.data.banner[j].imagelj+'"><img src="' + res.data.banner[j].image + '" alt="背景图" style="width:100%;height: 3.2rem;    border-radius: .2rem;" /></a></div>'
+                        }
+                        // console.log(str)
+                        $('.swiper-wrapper').append(str);
+                        // swiper部分
+                        var swiper = new Swiper('.swiper-container', {
+                            autoplay: true,
+                            loop: true,
+                            pagination: {
+                                el: '.swiper-pagination',
+                            },
+                        });
+                        // 选择套餐部分
+                        if (res.data.item.length <= 0) {
+                            $('.list').append("<li class='bw list_a tap'>暂无数据</li>")
+                        } else {
+                            if (isWeiXin()) {
+                                var a = ''
+                                for (var i = 0; i < res.data.item.length; i++) {
+                                    a += '<a href="y_confirm.html?item_id=' + res.data.item[i].id + '&money=' + res.data.item[i].price + '&minute=' + res.data.item[i].minute + '&id=' + res.data.item[i].id + '&macno=' + macno + '&user_id=' + user_id + '" class="bw list_a tap">' +
+                                        ' <p><img src="' + res.data.item[i].pic + '" style="width:0.4rem;"><span class="pl20">' + res.data.item[i].name + '</span></p>' +
+                                        '<p class="color2">' + res.data.item[i].price + '元/' + res.data.item[i].minute + '分钟</p>' +
+                                        ' </a>'
+                                }
+                                $('.list').append(a)
+
+                            } else { //支付宝
+
+                                var a = ''
+                                for (var i = 0; i < res.data.item.length; i++) {
+                                    a += '<a data-item="' + res.data.item[i].id + '"   class="bw list_a tap">' +
+                                        ' <p><img src="' + res.data.item[i].pic + '" style="width:0.4rem;"><span class="pl20">' + res.data.item[i].name + '</span></p>' +
+                                        '<p class="color2">' + res.data.item[i].price + '元/' + res.data.item[i].minute + '分钟</p>' +
+                                        ' </a>'
+                                }
+                                $('.list').append(a)
+                                $('.list').on('click', 'a', function() {
+                                    //alert(user_id+','+getUrlParam('macno')+','+$(this).attr('data-item'))
+                                    $.ajax({
+                                        type: "post",
+                                        url: dlcUrl() + 'Wxsite/Order/api',
+                                        data: { api_name: 'addOrder', user_id: user_id, macno: macno, item_id: $(this).data('item'), paytype: 3 },
+                                        dataType: 'json',
+                                        success: function(ret) {
+                                            //alert(JSON.stringify(ret))
+                                            $('.user').html(ret.data.ali_info)
+                                        }
+                                    });
+                                })
+                            }
+                        }
+                    } else {
+                        dlctipbox.show(res.msg);
+                    }
+                },
+                error: function() {
+                    dlctipbox.show('网络异常,请刷新');
+                }
+            })
+            // 判断是否有健康档案然后进行跳转
+            $('.btn2').click(function() {
+                //判断是否有绑定手机
+                if (res.data.mobile) {
+                    //判断是否有健康档案
+                    if (res.data.is_info == 1) {
+                        location.replace('y_file.html');
+                    } else {
+                        location.replace('y_no_file.html');
+                    }
+                } else {
+                    location.replace('y_bind_phone.html?type==1&is_info=' + res.data.is_info);
+                }
+            })
+        } else {
+            dlctipbox.show(res.msg)
+            console.log(res)
+        }
+    })
+
+
+
+
+
+
+
+
+
+
+
+
+    function isWeiXin() {
+        var ua = window.navigator.userAgent.toLowerCase();
+        console.log(ua); //mozilla/5.0 (iphone; cpu iphone os 9_1 like mac os x) applewebkit/601.1.46 (khtml, like gecko)version/9.0 mobile/13b143 safari/601.1
+        if (ua.match(/MicroMessenger/i) == 'micromessenger') {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+
+
+
+})
+</script>

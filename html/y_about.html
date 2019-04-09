@@ -1,0 +1,71 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>
+        关于我们
+    </title>
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+    <meta content="webkit" name="renderer">
+    <meta content="no-siteapp" http-equiv="Cache-Control" />
+    <meta content="yes" name="mobile-web-app-capable" />
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="black" name="apple-mobile-web-app-status-bar-style" />
+    <meta content="telephone=no,email=no,address=no" name="format-detection" />
+    <meta content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport" />
+    <link href="../css/common.css" rel="stylesheet" />
+    <script src="../js/adaptive.js" type="text/javascript"></script>
+    <script src="../js/jquery-3.2.1.min.js" type="text/javascript"></script>
+    <script>
+    window['adaptive'].desinWidth = 750;
+    window['adaptive'].baseFont = 28;
+    window['adaptive'].init();
+    </script>
+    
+</head>
+
+<body>
+    <!-- 主体部分 -->
+    <div class="container">
+        <p class="tac mt100"><img class="pic" alt="" style="width: 1.84rem"></p>
+        <p class="mt80 font32 tac name" style="color: #5b5b5b">摩爱按摩椅</p>
+        <li class="bw flex_a flex-sb p30 mt60 bdt">
+            当前版本<span class="versions"></span>
+        </li>
+        <a class="bw flex_a flex-sb p30 bdb bdt">
+            客服电话<span class="color1 kfphone"></span>
+        </a>
+    </div>
+    <!-- 底部 -->
+</body>
+</html>
+<script src="../js/jquery-3.2.1.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/dlc.js" type="text/javascript" charset="utf-8"></script>
+<script>
+$(function() {
+           $.ajax({
+                type: "POST",
+                data: { api_name: 'about'},
+                url: dlcUrl() + "Wxsite/home/index",
+                dataType: "json",
+                success: function(res) {
+                    if (res.code == '1') {
+                        console.log(res);
+                        $('.name').html(res.data.name);
+                        $('.pic').attr('src',res.data.mainpic)
+                        $('.versions').html(res.data.versions);
+                        $('.kfphone').html(res.data.kfphone).parents('a').attr('href','tel:'+res.data.kfphone);
+                    } else {
+                        dlctipbox.show(res.msg);
+                    }
+                },
+                error: function(error) {
+                    console.log(error)
+                    dlctipbox.show('网络异常,请刷新');
+                }
+            });
+})
+</script>

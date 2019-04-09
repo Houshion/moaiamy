@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>我的钱包</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-
+scale=1, user-scalable=no">
+    <link rel="stylesheet" type="text/css" href="../css/swiper.min.css" />
+    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+    <script type="text/javascript" src="../js/adaptive.js"></script>
+    <script>
+    window['adaptive'].desinWidth = 750;
+    window['adaptive'].baseFont = 28;
+    window['adaptive'].init();
+    </script>
+    <style type="text/css">
+    .inner_box {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        /*background: #f00;*/
+    }
+
+    .inner_box>p {
+        color: #fff;
+        text-shadow: 0 0 10px rgba(0, 0, 0, .2);
+        text-align: center;
+    }
+    </style>
+</head>
+
+<body>
+    <div class="mt20 plr24 pos_r">
+        <img src="../img/bg_12.png" style="width: 7.02rem;height: 3.6rem">
+        <div class="inner_box">
+            <p class="mt80 font40"><small class="font20">￥</small><span class="total"></span></p>
+            <p class="font12 mt20">我的余额</p>
+            <ul class="flex mt40">
+                <li class="flex flex-column w50" style="color: #f95338">
+                    <span class="money"></span>
+                    <span>现金余额</span>
+                </li>
+                <li class="flex flex-column w50" style="color: #f95338">
+                    <span class="give_money"></span>
+                    <span>赠送余额</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <ul class="mt20 plr24" href="y_recharge.html">
+        <a href="y_recharge.html" class="flex_a flex-sb bw p30 mt20 tap">充值
+                <span>    
+                    <img src="../img/arrow_right_1.png" style="width: .15rem" />
+                </span>
+            </a>
+        <a href="y_coupon.html" class="flex_a flex-sb bw p30 mt20 tap">优惠券
+                <span>
+                    <img src="../img/arrow_right_1.png" style="width: .15rem" />
+                </span>
+            </a>
+        <a class="flex_a flex-sb bw p30 mt20 tap" id="detail">明细
+                <span>
+                    <img src="../img/arrow_right_1.png" style="width: .15rem" />
+                </span>
+            </a>
+    </ul>
+</body>
+
+</html>
+<script src="../js/jquery-3.2.1.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/dlc.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/swiper.min.js" type="text/javascript" charset="utf-8"></script>
+<!--公司的常用函数封装-->
+<script>
+$(function() {
+    addEventback()
+    $('#detail').click(function () {
+        location.href = 'y_detail.html?type=1'
+    })
+    $.ajax({
+        type: 'POST',
+        url: dlcUrl() + 'Wxsite/cash/api/',
+        data: { api_name: 'wallet'},
+        dataType: 'json',
+        success: function(res) {
+            if (res.code == 1) {
+                console.log(res);
+                $('.total').text(res.data.total.toFixed(2))
+                $('.money').text(res.data.money)
+                $('.give_money').text(res.data.give_money)
+            } else {
+                dlctipbox.show(res.msg);
+            }
+        },
+        error: function(error) {
+            console.log(error)
+            dlctipbox.show('网络异常,请刷新');
+        }
+    })
+})
+</script>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>列表</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <link rel="stylesheet" type="text/css" href="../css/swiper.min.css" />
+    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+    <script type="text/javascript" src="../js/adaptive.js"></script>
+    <script>
+    window['adaptive'].desinWidth = 750;
+    window['adaptive'].baseFont = 28;
+    window['adaptive'].init();
+    </script>
+    <style type="text/css">
+    .map_list:first-child {
+        margin-top: 0;
+    }
+    </style>
+</head>
+
+<body>
+    <ul class="list">
+        <!--            <a class="flex_a flex-sb p30 bw mt20 map_list"  data-lng="' + ret.data[i].lng + '" data-lat="' + ret.data[i].lat + '" data-address="' + ret.data[i].address + '"> <ul> <h3>东城万达广场</h3> <p class="mt20 flex_a"><img src="../img/map.png" style="width: .25rem"><span class="ml10">东莞市东城区东纵大道123号</span></p> </ul> <img src="../img/navigation.png" style="width: .6rem"> </a> -->
+    </ul>
+</body>
+
+</html>
+<script type="text/javascript" src="https://3gimg.qq.com/lightmap/components/geolocation/geolocation.min.js"></script>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script src="../js/jquery-3.2.1.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/dlc.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/swiper.min.js" type="text/javascript" charset="utf-8"></script>
+<!--公司的常用函数封装-->
+<script>
+dlc_request('Wxsite/Massage/api', {api_name:'sites', lng: getUrlParam('lng'), lat: getUrlParam('lat') }, function(ret, err) {
+    console.log(ret)
+    for (i in ret.data) {
+        $('.list').append(
+            '<a class="flex_a flex-sb p30 bw mt20 map_list" data-name='+ret.data[i].name+'  data-lng="' + ret.data[i].lng + '" data-lat="' + ret.data[i].lat + '" data-address="' + ret.data[i].address + '"> <ul> <h3>'+ret.data[i].name+'</h3> <p class="mt20 flex_a"><img src="../img/map.png" style="width: .25rem"><span class="ml10">'+ret.data[i].address+'</span></p> </ul> <img src="../img/navigation.png" style="width: .6rem"> </a>'
+        )
+    }
+
+})
+
+
+
+var timestamp = (new Date().getTime() / 1000).toFixed(0);
+var nonceStr = Math.random().toString(36).substr(2);
+var ticket = wx_js(getUrlParam('ticket'), timestamp, nonceStr);
+wx.config({
+    debug: false, // 开启调试模式,调用的所有api的返回值会在客户端//alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+    appId: 'wx14c6b5d27daad538', // 必填，公众号的唯一标识
+    timestamp: timestamp, // 必填，生成签名的时间戳
+    nonceStr: nonceStr, // 必填，生成签名的随机串
+    signature: ticket, // 必填，签名，见附录1
+    jsApiList: ['checkJsApi',
+        'onMenuShareTimeline',
+        'onMenuShareAppMessage',
+        'onMenuShareQQ',
+        'onMenuShareWeibo',
+        'hideMenuItems',
+        'showMenuItems',
+        'hideAllNonBaseMenuItem',
+        'showAllNonBaseMenuItem',
+        'translateVoice',
+        'startRecord',
+        'stopRecord',
+        'onRecordEnd',
+        'playVoice',
+        'pauseVoice',
+        'stopVoice',
+        'uploadVoice',
+        'downloadVoice',
+        'chooseImage',
+        'previewImage',
+        'uploadImage',
+        'downloadImage',
+        'getNetworkType',
+        'openLocation',
+        'getLocation',
+        'hideOptionMenu',
+        'showOptionMenu',
+        'closeWindow',
+        'scanQRCode',
+        'chooseWXPay',
+        'openProductSpecificView',
+        'addCard',
+        'chooseCard',
+        'openCard'
+    ] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+});
+
+    wx.ready(function(){
+	    	$('.list').on('click', 'a', function() {
+	    	    var that = $(this)
+	    	    wx.openLocation({
+	    	        latitude: that.data('lat'),
+	    	        longitude: that.data('lng'),
+	    	        name:  that.data('name'),
+	    	        address: that.data('address'),
+	    	        scale: 14,
+	    	        infoUrl: ''
+	    	    });
+	
+	    	})
+    })
+function wx_js(signature, timestamp, nonceStr) {
+    var e = decodeURIComponent('jsapi_ticket=' + signature + '&noncestr=' + nonceStr + '&timestamp=' + timestamp + '&url=' + location.href.split("#")[0]),
+        s = new jsSHA(e, "TEXT"),
+        signature = s.getHash("SHA-1", "HEX");
+    return signature;
+}
+</script>

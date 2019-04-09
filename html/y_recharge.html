@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>充值</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-
+scale=1, user-scalable=no">
+    <link rel="stylesheet" type="text/css" href="../css/swiper.min.css" />
+    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+    <script type="text/javascript" src="../js/adaptive.js"></script>
+    <script>
+    window['adaptive'].desinWidth = 750;
+    window['adaptive'].baseFont = 28;
+    window['adaptive'].init();
+    </script>
+    <style type="text/css">
+    .recharge1_box label {
+        width: 3.36rem;
+        height: 1.1rem;
+        background: #fff;
+        border-radius: .1rem;
+        margin-top: .3rem;
+    }
+
+    .recharge1_box label span {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-flow: row wrap;
+        justify-content: center;
+        align-items: center;
+        border-radius: 5px;
+        color: #ffa795;
+    }
+
+    .recharge1_box input[type='radio']:checked+span {
+        background: #ffa795;
+        color: #fff;
+    }
+    /*支付按钮*/
+
+    .main_btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: .6rem auto;
+        color: #fff;
+        padding: .3rem .2rem;
+        width: 6.8rem;
+        border-radius: 50px;
+    }
+    </style>
+</head>
+
+<body>
+    <p class="mt20 plr24">充值金额</p>
+    <ul class="plr24 flex-sb recharge1_box list" style="flex-wrap: wrap;">
+        <!--  <label class="flex font15">
+            <input type="radio" name="recharge" value="0" hidden checked /><span class="name">充值500送100</span></label> -->
+        <!--  <label class="flex font15">
+            <input type="radio" name="recharge" value="10" hidden /><span>充值500送100</span></label>
+        <label class="flex font15">
+            <input type="radio" name="recharge" value="100" hidden /><span>充值500送100</span></label> -->
+    </ul>
+    <ul class="plr24 mt50 recharge2_box">
+        <li class="p30 bw bdb">选择支付方式</li>
+        <li class="p30 bw bdb flex_a flex-sb">
+            <div class="flex">
+                <img src="../img/weixing.png" style="width: .54rem" />
+                <span class="ml30">微信支付</span>
+            </div>
+            <label>
+                <input type="radio" name="pay" checked hidden/>
+                <span class="flex checkbox_bg"></span>
+            </label>
+        </li>
+    </ul>
+    <!-- 支付 -->
+    <a class="main_btn bgc1" id="pay">支付</a>
+</body>
+
+</html>
+<script src="../js/jquery-3.2.1.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/dlc.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/swiper.min.js" type="text/javascript" charset="utf-8"></script>
+<!--公司的常用函数封装-->
+<script>
+// 获取充值金额基本信息
+$.ajax({
+    type: 'POST',
+    data: { api_name: 'payItem'},
+    url: dlcUrl() + 'Wxsite/cash/api/',
+    dataType: 'json',
+    success: function(res) {
+        console.log(res)
+        if (res.code == 1) {
+            if (res.data.length == 0) {
+                $('.list').append("<li class='bw flex p30 mt20 tap'>暂无数据</li>")
+            } else {
+                var a = ''
+                for (i in res.data) {
+                    $('.list').append(' <label class="flex font15">' +
+                        '<input type="radio"  name="recharge" value="' + res.data[i].option_id + '" data-Type="' + res.data[i].option_id + '" hidden/><span class="name">' + res.data[i].name + '</span></label>')
+                }
+                var money = $('.recharge1_box input[name="recharge"]:checked').val();
+                $("input[name=recharge]").on('change', function() {
+                    money = $('ul input[name="recharge"]:checked').val();
+                    console.log(money)
+                });
+                $("input[name=recharge]").eq(0).prop("checked", true)
+            }
+            dlctipbox.clear();
+        } else {
+            console.log(res.msg);
+        }
+    },
+    error: function(err) {
+        console.log(err)
+
+    }
+});
+
+var onoff=0;
+$('#pay').on('click', function() {
+	if(onoff) return false; 
+	onoff=1;
+	dlctipbox.show('请稍后...');
+    dlc_request('Wxsite/cash/api/', { api_name: 'recharge',user_id:localStorage.getItem("user_id"),option_id: $('ul input[name="recharge"]:checked').val(), paytype: 1 }, function(res) {
+        console.log(res.package);
+        //alert(JSON.stringify(res.package))
+        if (res.code == 1) {
+            jsApiParameters = res.package;
+            callpay()
+            console.log(res.msg);
+        } else {
+        	onoff=0
+            console.log(res.msg);
+        }
+    })
+});
+// 充值
+var jsApiParameters = {};
+
+function jsApiCall() {
+    WeixinJSBridge.invoke(
+        'getBrandWCPayRequest',
+        jsApiParameters,
+        function(res) {
+			//alert(res.err_msg);
+            if (res.err_msg == 'get_brand_wcpay_request:ok') {
+                dlctipbox.show('充值成功');
+                location.href = 'y_recharge_result.html?type=1';
+            } else {
+            	onoff=0
+                dlctipbox.show('充值取消或失败');
+                location.href = 'y_recharge_result.html?type=2';
+            }
+
+        }
+    );
+}
+
+function callpay() {
+    if (typeof WeixinJSBridge == "undefined") {
+        if (document.addEventListener) {
+            document.addEventListener('WeixinJSBridgeReady', jsApiCall, false);
+        } else if (document.attachEvent) {
+            document.attachEvent('WeixinJSBridgeReady', jsApiCall);
+            document.attachEvent('onWeixinJSBridgeReady', jsApiCall);
+        }
+    } else {
+        jsApiCall();
+    }
+}
+</script>

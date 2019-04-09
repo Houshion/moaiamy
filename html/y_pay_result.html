@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>支付结果</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-
+scale=1, user-scalable=no">
+    <link rel="stylesheet" type="text/css" href="../css/swiper.min.css" />
+    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+    <script type="text/javascript" src="../js/adaptive.js"></script>
+    <script>
+    window['adaptive'].desinWidth = 750;
+    window['adaptive'].baseFont = 28;
+    window['adaptive'].init();
+    </script>
+    <style type="text/css">
+    .result_btn {
+        padding: .3rem;
+        border: 1px solid #ffa795;
+        border-radius: 50px;
+        margin-top: .6rem;
+        color: #fff;
+    }
+
+    .center {
+        text-align: center;
+    }
+    </style>
+</head>
+
+<body>
+    <section class="bigBox">
+        <div class="container plr24 mt20 type1 center" data-type='1'>
+            <img src="../img/bg_8.png" style="margin-top: 1.6rem;width: 5.44rem;height: 3.98rem">
+            <p class="tac color1 mt30 begin_btn">支付成功</p>
+            <a class="btn result_btn start_btn flex bgc1 tap">开始按摩</a>
+        </div>
+        <div class="container plr24 mt20 type2 center" data-type='2'>
+            <img src="../img/bg_7.png" style="margin-top: 1.6rem;width: 5.44rem;height: 3.98rem">
+            <p class="tac col9 mt30">支付失败</p>
+            <a href="javascript:history.go(-1)" class="btn result_btn flex">返回</a>
+        </div>
+        <p class="tac p30">客服电话：<a class="color2" href="tel:400-100-100">400-100-100</a></p>
+    </section>
+</body>
+
+</html>
+<script src="../js/jquery-3.2.1.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/dlc.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/swiper.min.js" type="text/javascript" charset="utf-8"></script>
+<!--公司的常用函数封装-->
+<script>
+$(function() {
+    $('.bigBox').children().hide()
+    if (getUrlParam('type') == 2) { //支付失败
+        $('.type2').show();
+    } else { //支付成功
+        $('.type1').show();
+    }
+
+    setTimeout(function() { check_macno() }, 1500);
+})
+$('.start_btn').on('click', function() {
+    dlc_request('Wxsite/Health/api/', { api_name: 'is_info' }, function(res) { //健康档案的接口
+        console.log(res)
+        if (res.code == 1) {
+            if (res.data == 1) { //有健康档案存档
+                dlctipbox.show('请稍等...');
+                dlc_request('Wxsite/Hardware/api', { api_name: 'begin', macno: getUrlParam('macno') }, function(res) {
+                    console.log(res);
+                    if (res.code == 1) {
+                        dlctipbox.show(res.msg)
+                        begin();
+                    } else {
+                        dlctipbox.show(res.msg)
+                    }
+                }, false)
+
+            } else { //没有健康档案，套餐是否进行酸痛检测
+                dlc_request('Wxsite/Hardware/api', { api_name: 'isCheck', macno: getUrlParam('macno') }, function(res) {
+                    console.log(res);
+                    if (res.code == 1) {
+                        // alert(res.isCheck)
+                        if (res.isCheck == 0) { //不需要检测
+                            begin();
+                        } else {
+                            location.replace('y_assess.html?macno=' + getUrlParam('macno'));
+                        }
+                    } else {
+                        dlctipbox.show(res.msg)
+                    }
+                })
+            }
+        }
+    }, false)
+})
+
+function check_macno() {
+    dlc_request('Wxsite/Health/api/', { api_name: 'is_info' }, function(res) { //健康档案的接口
+        console.log(res)
+        if (res.code == 1) {
+            if (res.data == 1) { //有健康档案存档
+                dlctipbox.show('请稍等...');
+                chairStatus();
+            } else { //没有健康档案，套餐是否进行酸痛检测
+                dlc_request('Wxsite/Hardware/api', { api_name: 'isCheck', macno: getUrlParam('macno') }, function(res) {
+                    console.log(res);
+                    if (res.code == 1) {
+                        // alert(res.isCheck)
+                        if (res.isCheck == 0) { //不需要检测
+                            chairStatus();
+                        } else {
+                            dlc_request('Wxsite/Hardware/api', { api_name: 'chairStatus', macno: getUrlParam('macno') }, function(res) { //椅子状态
+                                console.log(res);
+                                if (res.code == 1) {
+                                    if (res.data == 1) {
+                                        location.replace('y_assess.html?macno=' + getUrlParam('macno'));
+                                    } else {
+                                        dlctipbox.show('座椅上暂无人');
+                                    }
+                                }
+                            }, false)
+                        }
+                    } else {
+                        dlctipbox.show(res.msg)
+                    }
+                })
+            }
+        }
+    }, false)
+}
+
+function chairStatus() { //判断椅子状态
+    dlc_request('Wxsite/Hardware/api', { api_name: 'chairStatus', macno: getUrlParam('macno') }, function(res) { //椅子状态
+        console.log(res);
+        if (res.code == 1) {
+            if (res.data == 1) {
+                begin();
+            } else {
+                dlctipbox.show('座椅上暂无人');
+            }
+        }
+    }, false)
+}
+
+function begin() { //开启设备
+    dlctipbox.show('开启设备中，请稍等...', null, '99999');
+    dlc_request('Wxsite/Hardware/api', { api_name: 'begin', macno: getUrlParam('macno') }, function(res) {
+        console.log(res);
+        if (res.code == 1) {
+            setTimeout(function() { window.location.href = 'y_began.html?macno=' + getUrlParam('macno') }, 1500)
+        } else {
+            dlctipbox.show(res.msg);
+        }
+    }, false)
+}
+</script>

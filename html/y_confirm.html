@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>确认订单</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <link rel="stylesheet" type="text/css" href="../css/swiper.min.css" />
+    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+    <script type="text/javascript" src="../js/adaptive.js"></script>
+    <script>
+    window['adaptive'].desinWidth = 750;
+    window['adaptive'].baseFont = 28;
+    window['adaptive'].init();
+    </script>
+    <style type="text/css">
+    /*已选择套餐*/
+
+    .ptb20 {
+        padding-top: .2rem;
+        padding-bottom: .2rem;
+    }
+
+    .bg_box {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+
+    .inner_box {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        left: 0;
+        top: 0;
+        color: #fff;
+    }
+
+    .inner_box p:first-child {
+        margin: .3rem .3rem;
+    }
+
+    .ts1 {
+        text-shadow: 0 0 10px rgba(0, 0, 0, .2)
+    }
+
+    .inner_box .a3 {
+        margin-top: .26rem;
+    }
+    /*选择支付方式*/
+
+    .confirm_label span {
+        width: .4rem;
+        height: .4rem;
+        border: 1px solid #999;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    input[type=radio]:checked+label {
+        border: 1px solid #ddd;
+    }
+
+    input[type=radio]:checked+span {
+        border: 1px solid #ffa795;
+        color: #fff;
+    }
+
+    input[type=radio]:checked+span:after {
+        content: '';
+        width: 48%;
+        height: 48%;
+        display: flex;
+        flex-flow: row wrap;
+        justify-content: center;
+        align-items: center;
+        border-radius: 50%;
+        background: #ffa795;
+    }
+
+    .main_btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 1.69rem auto 0;
+        color: #fff;
+        padding: .3rem.2rem;
+        width: 87%;
+        border-radius: 50px;
+    }
+    </style>
+</head>
+
+<body>
+    <div class="container plr24 mt20">
+        <!-- 已选择的套餐 -->
+        <ul class="bg_box">
+            <img src="../img/bg_4.png" class="mw100">
+            <div class="inner_box">
+                <p class="a1 colw ts1">已选择套餐</p>
+                <p class="ts1 mt font100 tac colw"><small class="font50">￥</small><span class="num_money1">0.00</span></p>
+                <p class="a3 tac colw ts1 name">合适放松（0元/0分钟）</p>
+            </div>
+        </ul>
+        <a class="p30 bw flex_a flex-sb mt20 border-r1 tap coupon_btn">优惠券<span><img src="../img/arrow_right.png" style="width: .18rem"></span></a>
+        <!-- 选择支付方式 -->
+        <ul class="bw mt20">
+            <p class="flex_a flex-sb p30 bdb">
+                请选择支付方式
+                <span class="col9 font15">需支付<span class="num_money1"></span>元</span>
+            </p>
+            <label class="flex_a flex-sb p30 mt20 bdb">
+                <p class="flex"><img src="../img/weixing.png" style="width: .54rem;margin-right: .2rem">微信支付</p>
+                <p class="confirm_label">
+                    <input type="radio" name="pay" hidden checked value="2" />
+                    <span></span>
+                </p>
+            </label>
+            <label class="flex_a flex-sb p30 mt20">
+                <p class="flex"><img src="../img/icon_4.png" style="width: .54rem;margin-right: .2rem">余额支付</p>
+                <p class="confirm_label">
+                    <input type="radio" name="pay" value="1" hidden/>
+                    <span></span>
+                </p>
+            </label>
+        </ul>
+        <a class="main_btn bgc1">确定</a>
+    </div>
+</body>
+
+</html>
+<script src="../js/jquery-3.2.1.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/dlc.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" src="../js/sweetalert2.all.min.js"></script>
+<script src="../js/swiper.min.js" type="text/javascript" charset="utf-8"></script>
+<!--公司的常用函数封装-->
+<script>
+var off = false;
+$(function() {
+    // 获取基本信息
+    dlc_request('Wxsite/Order/api', { api_name: 'confirmOrder', item_id: getUrlParam('item_id'), coupon_id: getUrlParam('coupon_id') }, function(res) {
+        console.log(res)
+        if (res.code == 1) {
+            $('.name').text(res.data.name + ":" + res.data.price + '元/' + res.data.minute + '分钟');
+            // $('.num_money').text(res.data.price).attr('data-price',res.data.price);
+            $('.num_money1').text(res.data.num_money).attr('data-price',res.data.num_money);
+        } else {
+            dlctipbox.show(res.msg)
+        }
+    })
+
+
+    // $('.name').text((getUrlParam('id') == 1 ? '合适放松' : getUrlParam('id') == 2 ? '疲劳恢复' : '酸痛改善') + '(' + getUrlParam('money') + '元/' + getUrlParam('minute') + '分钟)');
+    //优惠券跳转
+    $('.coupon_btn').click(function() {
+        location.href = 'coupon.html?item_id=' + getUrlParam('item_id') + '&user_id=' + getUrlParam('user_id') + '&macno=' + getUrlParam('macno') + '&num_money='+$('.num_money1').data('price');
+    })
+    // 充值
+    $('.main_btn').on('click', function() {
+        if (off) return false;
+        off = true;
+        var pay_type = $('input[name=pay]:checked').val();
+        if (pay_type == 1) { //余额支付
+            dlc_request('Wxsite/Order/api', { api_name: 'addOrder', user_id: getUrlParam('user_id'), item_id: getUrlParam('item_id'), paytype: pay_type, macno: getUrlParam('macno'), coupon_id: getUrlParam('coupon_id') }, function(res) {
+                console.log(res)
+                // alert(JSON.stringify(res))
+                if (res.code == 1) {
+                    dlctipbox.show(res.msg);
+                    setTimeout(function() { location.href='y_pay_result.html?money=1&macno=' + getUrlParam('macno') }, 1500)
+                } else if (res.code == -3) {
+                    dlctipbox.show(res.msg);
+                    off = false;
+                } else {
+                    // alert(JSON.stringify(res))
+                    dlctipbox.show(res.msg);
+                    off = false;
+                }
+            })
+        } else if (pay_type == 2) { //微信支付
+            dlc_request('Wxsite/Order/api', { api_name: 'addOrder', user_id: getUrlParam('user_id'), item_id: getUrlParam('item_id'), paytype: pay_type, macno: getUrlParam('macno'), coupon_id: getUrlParam('coupon_id') }, function(res) {
+                // alert(JSON.stringify(res))
+                console.log(res)
+                if (res.code == 1) {
+                    jsApiParameters = res.data.wx_info.package;
+                    callpay();
+                } else {
+                    dlctipbox.show(res.msg);
+                    off = false;
+                }
+            })
+        }
+
+        // location.href = 'y_pay_result.html?money=' + getUrlParam('money')
+    })
+    var jsApiParameters = {};
+    var money = getUrlParam('money');
+
+
+    //调用微信JS api 支付
+
+    function jsApiCall() {
+        WeixinJSBridge.invoke(
+            'getBrandWCPayRequest',
+            jsApiParameters,
+            function(res) {
+                if (res.err_msg == 'get_brand_wcpay_request:ok') {
+                    dlctipbox.show('支付成功');
+                    location.href='y_pay_result.html?type=1&macno=' + getUrlParam('macno');
+                } else {
+                    dlctipbox.show('支付取消或失败');
+                    off = false;
+                }
+
+            }
+        );
+    }
+
+    function callpay() {
+        if (typeof WeixinJSBridge == "undefined") {
+            if (document.addEventListener) {
+                document.addEventListener('WeixinJSBridgeReady', jsApiCall, false);
+            } else if (document.attachEvent) {
+                document.attachEvent('WeixinJSBridgeReady', jsApiCall);
+                document.attachEvent('onWeixinJSBridgeReady', jsApiCall);
+            }
+        } else {
+            jsApiCall();
+        }
+    }
+})
+
+</script>

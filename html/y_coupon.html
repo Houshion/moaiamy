@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>优惠券</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <link rel="stylesheet" type="text/css" href="../css/swiper.min.css" />
+    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../css/dropload.css" />
+    <script type="text/javascript" src="../js/adaptive.js"></script>
+    <script>
+    window['adaptive'].desinWidth = 750;
+    window['adaptive'].baseFont = 28;
+    window['adaptive'].init();
+    </script>
+    <style type="text/css">
+    .coupon_container ul li {
+        position: relative;
+        margin-top: .2rem;
+    }
+
+    .coupon_container ul li:first-child {
+        position: relative;
+        margin-top: 0;
+    }
+
+    .coupon_ib {
+        position: absolute;
+        width: 88%;
+        height: calc(100% - 30px);
+        top: 0;
+        left: 0;
+        padding: 0 .4rem;
+    }
+
+    .dy1 .c1 {
+        color: blue;
+        margin-top: .2rem;
+    }
+
+    .dy1 .c2 {
+        color: #ffa795;
+    }
+
+    .dy2 .c1 {
+        color: red;
+        margin-top: .2rem;
+    }
+
+    .dy2 .c2 {
+        color: #ffa795;
+    }
+
+    .dy3 .c1 {
+        color: #999;
+        margin-top: .2rem;
+    }
+
+    .dy3 .c2 {
+        color: #999;
+    }
+
+    .col-093fa9 {
+        color: #093fa9;
+    }
+
+    .dhm_container {
+        display: flex;
+        width: 7.02rem;
+        line-height: 1rem;
+        height: 1rem;
+        background: #fff;
+        border-radius: .1rem;
+        margin: 0.2rem auto;
+        justify-content: center;
+        align-items: center;
+    }
+
+    input {
+        width: 5.88rem;
+        height: 1rem;
+        margin-left: .2rem;
+    }
+
+    .c_btn {
+        background: #fff;
+        color: #ffa596;
+        width: 1.14rem;
+        text-align: center;
+    }
+    .line1{
+        width: 1px;
+        height: .65rem;
+        background: #ccc;
+    }
+    </style>
+</head>
+
+<body>
+    <div class="dhm_container">
+        <input type="text" class="bindCoupon" name="bindCoupon" placeholder="请输入兑换码" />
+        <b class="line1"></b>
+        <button class="c_btn">兑换</button>
+    </div>
+    <div class="container plr24 mt20 coupon_container">
+        <ul class="list">
+            <!--              <li class="bw dy1" style="height: 120%" data-type='1'>
+                <img src="../img/bg_5.png">
+                <div class="coupon_ib flex_a flex-sb">
+                    <p class="font80 colw">0折</p>
+                    <ul class="flex-column">
+                        <p class="colw">合适放松项目券</p>
+                        <p class="c1 tae">仅限合适放松项目使用</p>
+                    </ul>
+                </div>
+                <p class="col9 p30 flex_a flex-sb">
+                    有效期：2017-01-01
+                    <span class="c2">未使用</span>
+                </p>
+            </li>
+            <li class="bw dy2" style="height: 120%" data-type='2'>
+                <img src="../img/bg_6.png">
+                <div class="coupon_ib flex_a flex-sb">
+                    <p class="font80 colw">0折</p>
+                    <ul class="flex-column">
+                        <p class="colw">合适放松项目券</p>
+                        <p class="c1 tae">仅限合适放松项目使用</p>
+                    </ul>
+                </div>
+                <p class="col9 p30 flex_a flex-sb">
+                    有效期：2017-01-01
+                    <span class="c2">未使用</span>
+                </p>
+            </li>
+            <li class="bw dy3" style="height: 120%" data-type='3'>
+                <img src="../img/10.png">
+                <div class="coupon_ib flex_a flex-sb">
+                    <p class="font80 colw">0折</p>
+                    <ul class="flex-column">
+                        <p class="colw">合适放松项目券</p>
+                        <p class="c1 tae">仅限合适放松项目使用</p>
+                    </ul>
+                </div>
+                <p class="col9 p30 flex_a flex-sb">
+                    有效期：2017-01-01
+                    <span class="c2">未使用</span>
+                </p>
+            </li> -->
+        </ul>
+    </div>
+</body>
+
+</html>
+<script src="../js/jquery-3.2.1.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/dlc.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/swiper.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/dropload.min.js" type="text/javascript" charset="utf-8"></script>
+<!--公司的常用函数封装-->
+<script>
+$(function() {
+    var onOff = 0;
+      // 兑换码
+    $('.c_btn').click(function () {
+        if (onOff) return false;
+        onOff = 1;
+        dlc_request('Wxsite/Hardware/api',{api_name:'bindCoupon',code:$('.bindCoupon').val()},function (res) {
+            console.log(res);
+            onOff =0;
+            if (res.code == 1) {
+                dlctipbox.show(res.msg);
+                location.reload();
+            }else{
+                dlctipbox.show(res.msg);
+            }
+        })
+    })
+    $.ajax({
+        type: 'POST',
+        url: dlcUrl() + 'Wxsite/Mywallet/api/',
+        data: { api_name: 'coupon_list', user_id: localStorage.getItem("user_id") },
+        dataType: 'json',
+        success: function(res) {
+            if (res.code == '1') {
+                console.log(res)
+                var a = res.data.new;
+                var b = res.data.used;
+                var c = res.data.over_time;
+                if (a.length == 0 && b.length == 0 && c.length == 0) {
+                    $('.list').html(emptyTip('暂无优惠券'));
+                } else {
+                    var h1 = ''
+                    var h2 = ''
+                    var h3 = ''
+                    for (var i = 0; i < a.length; i++) {
+                        h1 += '<li class="bw" style="height: 120%">' +
+                            '<img src="../img/bg_5.png" style="width:7.02rem;height:2.5rem">' +
+                            '<div class="coupon_ib flex_a flex-sb">' +
+                            '<p class="font80 colw">' + (a[i].type == '1' ? a[i].discounts + '折' : a[i].reduce_money + '元') + '</p>' +
+                            '<ul class="flex-column">' +
+                            '<p class="colw">' + a[i].item_name + '项目券</p>' +
+                            '<p class="col-093fa9" style="margin-top:.2rem">' + a[i].coupon_name + '</p>' +
+                            '</ul>' +
+                            '</div>' +
+                            '<p class="col9 p30 flex_a flex-sb">有效期：' + format(a[i].valid_time, 'Y-m-d') + '' +
+                            '<span class="c2">未使用</span>' +
+                            '</p>' +
+                            '</li>'
+                    }
+                    for (var i = 0; i < b.length; i++) {
+                        h2 += '<li class="bw dy2" style="height: 120%">' +
+                            '<img src="../img/bg_6.png" style="width:7.02rem;height:2.5rem">' +
+                            '<div class="coupon_ib flex_a flex-sb">' +
+                            '<p class="font80 colw">' + (b[i].type == '1' ? b[i].discounts + '折' : b[i].reduce_money + '元') + '</p>' +
+                            '<ul class="flex-column">' +
+                            '<p class="colw">' + b[i].item_name + '项目券</p>' +
+                            '<p class="c1 tae">' + b[i].coupon_name + '</p>' +
+                            '</ul>' +
+                            '</div>' +
+                            '<p class="col9 p30 flex_a flex-sb">有效期：' + format(b[i].valid_time, 'Y-m-d') + '' +
+                            '<span class="c2">已使用</span>' +
+                            '</p>' +
+                            '</li>'
+                    }
+                    for (var i = 0; i < c.length; i++) {
+                        h3 += '<li class="bw dy3" style="height: 120%">' +
+                            '<img src="../img/10.png" style="width:7.02rem;height:2.5rem">' +
+                            '<div class="coupon_ib flex_a flex-sb">' +
+                            '<p class="font80 colw">' + (c[i].type == '1' ? c[i].discounts + '折' : c[i].reduce_money + '元') + '</p>' +
+                            '<ul class="flex-column">' +
+                            '<p class="colw">' + c[i].item_name + '项目券</p>' +
+                            '<p class="c1 tae">' + c[i].coupon_name + '</p>' +
+                            '</ul>' +
+                            '</div>' +
+                            '<p class="col9 p30 flex_a flex-sb">有效期：' + format(c[i].valid_time, 'Y-m-d') + '' +
+                            '<span class="c2">已过期</span>' +
+                            '</p>' +
+                            '</li>'
+                    }
+
+                    $('.list').append(h1)
+                    $('.list').append(h2)
+                    $('.list').append(h3)
+                }
+            } else {
+                dlctipbox.show(res.msg);
+            }
+        },
+        error: function(error) {
+            console.log(error)
+            dlctipbox.show('网络异常,请刷新');
+        }
+    })
+})
+// 时间转换工具
+function getLocalTime(nS) {
+    return new Date(parseInt(nS) * 1000).toLocaleString().replace(/年|月/g, "-").replace(/日/g, " ");
+}
+// alert(getLocalTime(1293072805));
+</script>

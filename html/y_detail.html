@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>
+        明细
+    </title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-
+scale=1, user-scalable=no">
+    <link rel="stylesheet" type="text/css" href="../css/swiper.min.css" />
+    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+    <link rel="stylesheet" type="text/css" href="../css/dropload.css" />
+    <script type="text/javascript" src="../js/adaptive.js"></script>
+    <script>
+    window['adaptive'].desinWidth = 750;
+    window['adaptive'].baseFont = 28;
+    window['adaptive'].init();
+    </script>
+    <style>
+    .top {
+        height: 3.2rem;
+        /*border-top: 1px solid #aaa;*/
+        /*border-bottom: 1px solid #aaa;*/
+        background: url(../img/h_topbg1.png) center no-repeat;
+        background-size: cover;
+    }
+
+    .banner {
+        position: relative;
+        height: 4.5rem;
+        background: #99cfd1
+        /*border-top: 1px solid #aaa;*/
+    }
+
+    .bg_img {
+        width: 100%;
+        height: 100%;
+    }
+
+    .a_innerbox {
+        position: absolute;
+        left: calc(50% - 25%);
+        top: calc(50% - 25%);
+        width: 50%;
+        height: 50%;
+        text-align: center;
+    }
+
+    .flex-column {
+        flex-direction: column;
+    }
+
+    .filter {
+        -webkit-filter: blur(0.04rem);
+        -moz-filter: blur(0.04rem);
+        -o-filter: blur(0.04rem);
+        -ms-filter: blur(0.04rem);
+        filter: blur(0.04rem);
+    }
+
+    .menu-icon {
+        height: 0.18rem;
+        width: auto;
+    }
+
+    .avatar_person {
+        width: 1.82rem;
+        height: 1.82rem;
+        border-radius: 50%;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    }
+    </style>
+</head>
+
+<body>
+    <div class="ListBOx">
+        <ul class="plr24 list">
+            <!--<li class="flex_a flex-sb bw border-r1 p20 mt20 tap">
+                <div class="flex-column">
+                    <p>充值</p>
+                    <p class="col9 mt10 font12">2017-1-1 00:00</p>
+                </div>
+                <span class="font19 color1">+0.00</span>
+            </li>-->
+        </ul>
+    </div>
+</body>
+
+</html>
+<script src="../js/jquery-3.2.1.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/dlc.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/swiper.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/dropload.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/Unix.js" type="text/javascript" charset="utf-8"></script>
+<!--公司的常用函数封装-->
+<script>
+$(function() {
+    var page = 0,
+        size = 10;
+
+    // 明细的接口
+    if (getUrlParam('type') == 1) {
+        document.title = '明细';
+        // $('title').text('明细');
+        $('.ListBOx').dropload({
+            scrollArea: window,
+            loadDownFn: function(me) {
+                page++;
+                $.ajax({
+                    type: "POST",
+                    data: { api_name: 'detail', p: page, psize: 10 },
+                    url: dlcUrl() + "Wxsite/cash/api/",
+                    dataType: "json",
+                    success: function(res) {
+                        if (res.code == 1 && res.data.length >= 1) {
+                            var h = ''
+                            var a = res.data
+                            console.log(a)
+                            for (i in a) {
+                                h += ' <li class="flex_a flex-sb bw border-r1 p20 mt20 tap">' +
+                                    '<div class="flex-column">' +
+                                    '<p>' + a[i].log + '</p>' +
+                                    '<p class="col9 mt10 font12">' + a[i].ctime + '</p>' +
+                                    '</div>' +
+                                    '<span class="font19 color1">' + a[i].money + '</span>' +
+                                    '</li>'
+                            }
+                            $('.list').append(h);
+                        } else {
+                            me.lock();
+                            me.noData();
+                        }
+                        //$('.mdetail').append(str);
+                        me.resetload();
+                    },
+                    error: function(res) {
+                        me.resetload();
+                        console.log(res.msg);
+                    }
+                })
+
+            }
+        })
+    } else {
+        $('title').text('订单信息');
+        //订单信息的接口
+        $.ajax({
+            type: "POST",
+            data: { api_name: 'myOrder', user_id: localStorage.getItem("user_id") },
+            url: dlcUrl() + "Wxsite/Order/api",
+            dataType: "json",
+            success: function(res) {
+                if (res.code == 1 && res.data.length >= 1) {
+                    var h = '';
+                    var a = res.data;
+                    console.log(a)
+                    for (i in a) {
+                        h += ' <li class="flex_a flex-sb bw border-r1 p20 mt20 tap" order_id="' + a[i].order_id + '">' +
+                            '<div class="flex-column">' +
+                            '<p>' + a[i].name + '</p>' +
+                            '<p class="col9 mt10 font12">' + date('Y-m-d H:i:s', a[i].ctime) + '</p>' +
+                            '</div>' +
+                            '<span class="font19 color1">' + a[i].real_money + '</span>' +
+                            '</li>'
+                    }
+                    $('.list').html(h);
+                } else {
+                    $('.list').html(emptyTip('暂无信息'))
+                }
+            },
+            error: function(res) {
+                console.log(res.msg);
+            }
+        })
+        $('.list').on('click', 'li', function() {
+            location.href = 'y_order_detail.html?order_id=' + $(this).attr('order_id');
+        })
+    }
+
+})
+</script>

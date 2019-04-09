@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>评测结果</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <link rel="stylesheet" type="text/css" href="../css/swiper.min.css" />
+    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+    <script type="text/javascript" src="../js/adaptive.js"></script>
+    <script>
+    window['adaptive'].desinWidth = 750;
+    window['adaptive'].baseFont = 28;
+    window['adaptive'].init();
+    </script>
+    <style type="text/css">
+    .main_btn {
+        position: relative;
+        bottom: .3rem;
+        left: .15rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: .6rem auto;
+        color: #fff;
+        padding: .3rem .2rem;
+        width: 6.8rem;
+        border-radius: 50px;
+    }
+    /*疲劳指数*/
+
+    .index_box {
+        width: 6rem;
+        margin: .6rem auto;
+    }
+
+    .index_box .progress {
+        width: 100%;
+        height: .15rem;
+        background: #fff;
+        border-radius: 50px;
+        margin-top: .2rem;
+        position: relative;
+        border: 1px solid #ccc;
+    }
+
+    .inner_box {
+        position: absolute;
+        left: 0;
+        top: 0;
+        /*background: #5be9bc;*/
+        height: 100%;
+        border-radius: 50px;
+    }
+    </style>
+</head>
+
+<body>
+    <div class="bw">
+        <div class="container plr24">
+            <p class="tac font15 mt60">
+                健康评测完成
+            </p>
+            <h3 class="mt50 text">
+                <!-- 结果分析：颈肩部酸痛指数超标，有肩周炎颈椎病风险， 请注意调理 -->
+            </h3>
+            <p><img src="../img/2.png" alt="" style="width: 7rem;height: 4.68rem"></p>
+            <!-- 疲劳指数 -->
+            <ul class="index_box mt50">
+                <!-- 疲劳指数 -->
+                <div>
+                    <p>疲劳指数<span class="ml30 color2 status"><!-- 重度 --></span></p>
+                    <li class="progress"><span class="inner_box inner_box_1"></span></li>
+                </div>
+                <!-- 酸痛指数 -->
+                <div>
+                    <p class="mt50">酸痛指数<span class="ml30 color3  status"><!-- 轻度 --></span></p>
+                    <li class="progress"><span class="inner_box inner_box_2"></span></li>
+                </div>
+            </ul>
+            <div class="tac font12">针对您的评测结果，为您推荐<span class="plan_id color1"></span>调理方案</div>
+        </div>
+        <a class="main_btn bgc1">开始按摩<span class="count ml20">(5s)</span></a>
+        <!-- <a class="main_btn bgc1" onclick="location.href='y_began.html?macno='+getUrlParam('macno')">开始按摩<span class="count ml20">(5s)</span></a> -->
+    </div>
+</body>
+
+</html>
+<script src="../js/jquery-3.2.1.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/dlc.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/swiper.min.js" type="text/javascript" charset="utf-8"></script>
+<!--公司的常用函数封装-->
+<script>
+//开启设备
+$('.main_btn').click(function() {
+    begin();
+})
+
+$(function() {
+    dlc_request('Wxsite/Hardware/api', { api_name: 'assessCheck', macno: getUrlParam('macno') }, function(res) {
+        console.log(res)
+        if (res.code == 1) {
+            $('.status').eq(0).attr('data-val', res.data.tired * 20); //因为后台返回值是1-5，我们是1-100的转换，所以*20
+            $('.status').eq(1).attr('data-val', res.data.ache * 20);
+            $('.text').text(res.data.text);
+            $('.plan_id').text(res.data.plan_id);
+            $('.inner_box').each(function(index) {
+                var val = $('.status').eq(index).data('val');
+                console.log(val);
+                $(this).width(val + '%');
+                if (val < 33) {
+                    $(this).css({ background: '#5be9bc' });
+                    $('.status').eq(index).text('轻度').css('color', '#5be9bc');
+                } else if (val >= 33 && val < 66) {
+                    $(this).css({ background: '#f9ea96' })
+                    $('.status').eq(index).text('中度').css('color', '#f9ea96');
+                } else if (val >= 66 && val < 101) {
+                    $(this).css({ background: '#f68595' })
+                    $('.status').eq(index).text('重度').css('color', '#f68595');
+                }
+                // 页面跳转倒计时
+                var num = 5;
+                var t = setInterval(function() {
+                    num--;
+                    if (num > 0) {
+                        $('.inner_p').width((60 - num) * (100 / 60) + "%");
+                        $('.count').text('(' + num + 's' + ')');
+                    } else {
+                        begin();
+                    }
+
+                }, 1000)
+            })
+
+        } else {
+            dlctipbox.show(res.msg)
+            console.log(res.msg)
+        }
+    })
+})
+
+function begin() {
+    dlc_request('Wxsite/Hardware/api', { api_name: 'begin', macno: getUrlParam('macno') }, function(res) {
+        console.log(res);
+        if (res.code == 1) {
+            location.replace('y_began.html?macno=' + getUrlParam('macno'))
+        } else {
+            dlctipbox.show(res.msg)
+        }
+    })
+}
+</script>

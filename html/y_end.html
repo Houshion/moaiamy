@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>服务完毕</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-
+scale=1, user-scalable=no">
+    <link rel="stylesheet" type="text/css" href="../css/swiper.min.css" />
+    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+    <script type="text/javascript" src="../js/adaptive.js"></script>
+    <script>
+    window['adaptive'].desinWidth = 750;
+    window['adaptive'].baseFont = 28;
+    window['adaptive'].init();
+    </script>
+</head>
+<style type="text/css">
+.bigBox {
+    background: url(../img/bg_11.png) no-repeat #fff;
+    -webkit-background-size: 100% 100%;
+    background-size: 100% 100%;
+}
+
+.type1 {
+    color: #88ABDA;
+}
+
+.type2 {
+    color: #00A5FF;
+}
+
+.progress {
+    width: 80%;
+    margin: 0.6rem auto;
+}
+
+.progress .pro_line {
+    width: 6rem;
+    height: .20rem;
+    border: 1px solid #EAEAEA;
+    border-radius: 50px;
+    margin-top: 20px;
+}
+
+.progress .pro_line span {
+    width: 0;
+    height: 100%;
+    border-radius: 50px;
+    display: block;
+}
+
+.type1_box span {
+    background: #88ABDA
+}
+
+.type2_box span {
+    background: #00A5FF
+}
+
+.main_btn {
+    width: 5rem;
+    height: .8rem;
+    border-radius: 50px;
+    margin: 0.3rem auto;
+}
+
+.btn1 {
+    background: #ffa795;
+    color: #fff
+}
+
+.btn2 {
+    border: 1px solid #ffa795;
+    color: #ffa795;
+}
+
+.expand {
+    height: 1px;
+    margin: 2px 0;
+    background: #2187e7;
+    position: absolute;
+    box-shadow: 0px 0px 10px 1px rgba(0, 198, 255, 0.4);
+}
+</style>
+
+<body>
+    <section class="bigBox flex-column">
+        <p class="mt100 font20 tac">服务完成！</p>
+        <b class="mt30 tac">小摩共为您服务<span class="item_minute"></span>分钟</b>
+        <!-- 进度条展示 -->
+        <ul class="mt60 progress">
+            <p class="">疲劳指数<span class="type1 ml20 tired">-0</span></p>
+            <p class="pro_line type1_box"><span></span></p>
+            <p class="mt60">酸痛指数<span class="type2 ml20 ache">-0</span></p>
+            <p class="pro_line type2_box"><span></span></p>
+        </ul>
+        <p class="mt100 plr24">完整按摩过程为<span class="item_minute"></span>分钟,可深度放松,大幅度降低疲劳值,要不要体验 一次呢?
+        </p>
+        <a href="javascript:;" onclick="location.href='y_chose.html?is_additem=1&macno='+getUrlParam('macno')" class="main_btn btn1 flex">我要加钟</a>
+        <a href="javascript:;" onclick="location.href='y_file.html?macno='+getUrlParam('macno')" class="main_btn btn2 flex">查看我的健康档案</a>
+    </section>
+</body>
+
+</html>
+<script src="../js/jquery-3.2.1.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/dlc.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/swiper.min.js" type="text/javascript" charset="utf-8"></script>
+<!--公司的常用函数封装-->
+<script>
+$(function() {
+    dlc_request('Wxsite/Hardware/api', {api_name:'getAcheTired'}, function(res) {
+        console.log(res)
+        // 获取初始状态
+        // var val_start = 80;
+        // var val_end = 60;
+        change(100, 100-res.data.tired, $('.type1_box span'));
+        change(100, 100-res.data.ache, $('.type2_box span'));
+        $('.tired').text('-'+res.data.tired);
+        $('.ache').text('-'+res.data.ache);
+        $('.item_minute').text(res.data.item_minute);
+    })
+})
+
+
+// 滚动条运动函数
+function change(val_start, val_end, obj) {
+    obj.width(val_start + '%'); // 初始化
+    obj.animate({ width: val_end + "%" }, 500);
+}
+</script>

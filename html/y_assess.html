@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>评测中</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <link rel="stylesheet" type="text/css" href="../css/swiper.min.css" />
+    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+    <script type="text/javascript" src="../js/adaptive.js"></script>
+    <script>
+    window['adaptive'].desinWidth = 750;
+    window['adaptive'].baseFont = 28;
+    window['adaptive'].init();
+    </script>
+    <style type="text/css">
+    .assess_box {
+        width: 60%;
+        margin: 0.6rem auto 1.6rem
+    }
+
+    .assess_box p {
+        margin-top: .2rem;
+    }
+
+    .main_btn {
+        position: absolute;
+        bottom: .3rem;
+        left: .15rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: .6rem auto;
+        color: #fff;
+        padding: .3rem .2rem;
+        width: 6.8rem;
+        border-radius: 50px;
+    }
+    /*进度条*/
+
+    .progress {
+        width: 5rem;
+        height: .3rem;
+        line-height: .3rem;
+        border: 1px solid #ffa795;
+        border-radius: 50px;
+        margin: .4rem auto;
+        position: relative;
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .inner_p {
+        height: 100%;
+        border-radius: 50px;
+        background: #FFD3CA;
+        position: absolute;
+        left: 0;
+        top: 0;
+        z-index: 10;
+    }
+
+    .out_p {
+        position: relative;
+        z-index: 12;
+    }
+
+    [class^="status"] {
+        display: none;
+    }
+
+    .status1 {
+        display: block;
+    }
+    </style>
+</head>
+
+<body>
+    <div class="bigBox bw">
+        <div class="container type1" data-type="1">
+            <p class="tac color1 font16 mt60">
+                评测准备...
+            </p>
+            <p class="mt60 flex"><img src="../img/bg_9.png" style="width: 5.41rem"></p>
+            <ul class="assess_box">
+                <p>1.静坐并背靠在按摩椅上</p>
+                <p>2.上肢自然放手于两侧，掌心向下</p>
+                <p>3.左手按住<span class="color1">金属电极</span></p>
+                <p>4.保持安静</p>
+            </ul>
+        </div>
+        <div class="container type2" data-type="2" style="display:none;">
+            <div class="mt60 flex" style="position: relative;">
+                <img src="../img/1.png" style="width: 5.03rem">
+                <!-- 颈部 -->
+                <div class="status status1">
+                    <img src="../img/321.gif" style="position: absolute;width:1rem; width:.6rem; left: 3.4rem; top: 1.1rem;" />
+                </div>
+                <!-- 肩膀 -->
+                <div class="status status2">
+                    <img src="../img/321.gif" style="position: absolute;width:1rem; width:.6rem; left: 4.4rem; top: 1.8rem;" />
+                    <img src="../img/321.gif" style="position: absolute;width:1rem; width: .6rem; right: 4.5rem; top: 1.8rem;" />
+                </div>
+                <!-- 背部 -->
+                <div class="status status3">
+                    <img src="../img/321.gif" style="position: absolute;width:1rem; width:.6rem; left: 4rem; top: 2.8rem;" />
+                    <img src="../img/321.gif" style="position: absolute;width:1rem; width: .6rem; right: 4.1rem; top: 2.8rem;" />
+                </div>
+                <!-- 腰部 -->
+                <div class="status status4">
+                    <img src="../img/321.gif" style="position: absolute;width:1rem; width:.6rem; left: 4rem; top: 3.8rem;" />
+                    <img src="../img/321.gif" style="position: absolute;width:1rem; width: .6rem; right: 4.1rem; top: 3.8rem;" />
+                </div>
+            </div>
+            <div class="progress col9">
+                <div class="out_p"><span class="count">检测过程预计需要3分钟</span>
+                </div>
+                <div class="inner_p"></div>
+            </div>
+        </div>
+        <a class="main_btn bgc1">退出检测，直接按摩</a>
+    </div>
+</body>
+
+</html>
+<script src="../js/jquery-3.2.1.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/dlc.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/swiper.min.js" type="text/javascript" charset="utf-8"></script>
+<!--公司的常用函数封装-->
+<script>
+$('.main_btn').click(function() {
+    setTimeout(function() {
+        begin();
+    }, 1500)
+})
+// 此页面2部分组成，如果是客户之前进入过这个页面，再按返回的时候就不用跳转到检测页面1了，会带一个状态值
+if (getUrlParam('status') == 1) {
+    status();
+} else {
+    // 接口调用
+    setTimeout(function() {
+        var onOff = 0;
+        dlc_request('Wxsite/Hardware/api', { api_name: 'assess', macno: getUrlParam('macno') }, function(res) {
+            console.log(res)
+            // alert(JSON.stringify(res))
+            // onOff = 1;
+            if (res.code == 1) {
+                if (onOff) return false;
+                // dlctipbox.show(res.msg + '请稍等...');
+                if (res.data.status == 0) {
+                    status();
+                } else {
+                    dlctipbox.show(res.data.status == 1 ? '交易失败，重复交易流水，不需重发相同系统交易流水；' : res.data.status == 2 ? '交易失败，设备正处于交易状态，需等设备完成另一笔交易后重发此系统交' : res.data.status == 3 ? '交易失败，命令数据错误。' : '交易失败，设备故障，无法完成交易，系统直接退单处理。');
+                    onOff = 0;
+
+                }
+            } else {
+                dlctipbox.show(res.msg);
+                onOff = 0;
+            }
+        })
+    }, 2000)
+}
+
+function status() {
+    $('.type1').hide();
+    $('.type2').show();
+    var onum = Date.parse(new Date()) / 1000 * 1 + 270;
+    var t = setInterval(function() {
+        var num = onum - Date.parse(new Date()) / 1000;
+        console.log(JSON.stringify(num))
+        if (num > 0) {
+            $('.inner_p').width((270 - num) * (100 / 270) + "%");
+            $('.count').text('检测过程预计需要3分钟');
+            dlc_request('Wxsite/Hardware/api', { api_name: 'assessCheck', macno: getUrlParam('macno') }, function(res) {
+                console.log(res);
+                // alert(JSON.stringify(res)) 
+                if (res.code == 1) {
+                    dlctipbox.clear()
+                    location.replace('y_assess_result.html?macno=' + getUrlParam('macno'));
+                } else if (res.code == 0) {
+                    // alert(JSON.stringify(res.data))
+                    if (res.data.neck_ache == 0 && res.data.shoulder_ache == 0 && res.data.back_ache == 0 && res.data.waist_ache == 0) {
+                        $('.status').css('display', 'none');
+                        $('.status1').show();
+                    } else if (res.data.neck_ache != 0 && res.data.shoulder_ache == 0) { //颈部检测
+                        $('.status').css('display', 'none');
+                        $('.status2').show();
+                    } else if (res.data.shoulder_ache != 0 && res.data.back_ache == 0) { //肩部检测
+                        $('.status').css('display', 'none');
+                        $('.status3').show();
+                    } else if (res.data.back_ache != 0 && res.data.waist_ache == 0) { //背部检测
+                        $('.status').css('display', 'none');
+                        $('.status4').show();
+                    } else { //腰部检测
+                        $('.status').css('display', 'none');
+                        $('.status4').show();
+                    }
+                } else if (res.code == -1) {
+                    dlctipbox.show(res.msg);
+                    begin();
+                }
+            })
+        } else {
+            $('.inner_p').width('100%');
+            $('.count').text('');
+            clearInterval(t);
+            chairStatus();
+        }
+
+    }, 1000)
+}
+
+function chairStatus() { //判断椅子状态
+    dlc_request('Wxsite/Hardware/api', { api_name: 'chairStatus', macno: getUrlParam('macno') }, function(res) { //椅子状态
+        console.log(res);
+        if (res.code == 1) {
+            if (res.data == 1) {
+                begin();
+            } else {
+                dlctipbox.show('座椅上无人');
+            }
+        }
+    }, false)
+}
+
+function begin() {
+    dlctipbox.show('请稍等...', null, '99999');
+    dlc_request('Wxsite/Hardware/api', { api_name: 'begin', macno: getUrlParam('macno') }, function(res) { //开启设备
+        if (res.code == 1) {
+
+            location.replace('y_began.html?macno=' + getUrlParam('macno'));
+        } else {
+            dlctipbox.show(res.msg);
+        }
+    })
+}
+</script>

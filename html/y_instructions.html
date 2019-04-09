@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>方案详情</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-
+scale=1, user-scalable=no">
+    <link rel="stylesheet" type="text/css" href="../css/swiper.min.css" />
+    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+    <script type="text/javascript" src="../js/adaptive.js"></script>
+    <script>
+    window['adaptive'].desinWidth = 750;
+    window['adaptive'].baseFont = 28;
+    window['adaptive'].init();
+    </script>
+    <style type="text/css">
+   p{text-indent: 2em}
+    </style>
+</head>
+
+<body>
+    <div class="bigBox bw">
+    <ul class="plr24 mt50">
+        <p class="content"><!-- 以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情以下是方案详情 --></p>
+        </ul>
+        </div>
+</body>
+
+</html>
+<script src="../js/jquery-3.2.1.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/dlc.js" type="text/javascript" charset="utf-8"></script>
+<!--公司的常用函数封装-->
+<script>
+$(function() {
+           $.ajax({
+                type: "POST",
+                data: { api_name: 'protocol'},
+                url: dlcUrl() + "Wxsite/Massage/api",
+                dataType: "json",
+                success: function(res) {
+                    if (res.code == '1') {
+                        console.log(res);
+                        $('.content').html(res.data.content)
+                    } else {
+                        dlctipbox.show(res.msg);
+                    }
+                },
+                error: function(error) {
+                    console.log(error)
+                    dlctipbox.show('网络异常,请刷新');
+                }
+            });
+})
+</script>

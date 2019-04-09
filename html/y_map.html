@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>去按摩</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+    <script type="text/javascript" src="../js/adaptive.js"></script>
+    <script>
+    window['adaptive'].desinWidth = 750;
+    window['adaptive'].baseFont = 28;
+    window['adaptive'].init();
+    </script>
+</head>
+<style type="text/css">
+#container {
+    height: calc(100% + 20px);
+    position: absolute!important;
+    width: 100%;
+}
+
+#tool {
+    width: 100%;
+    position: absolute;
+    height: 70px;
+    bottom: 4%;
+    left: 0;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.getlocal {
+    position: absolute;
+    top: -50%;
+    left: .24rem;
+}
+
+.location {
+    position: absolute;
+    left: 0;
+    top: 0;
+    background: #fff;
+    width: 100%;
+}
+
+.smnoprint {
+    display: none;
+}
+</style>
+
+<body>
+    <div id="container"></div>
+    <!-- 导航地址弹出框 -->
+    <div class="mBox" style="display: none;">
+        <!--    <li class="location flex_a flex-sb p30"> <ul> <h3 class="font16 name">南城峰汇广场</h3> <p class="mt30 font14 flex_a"><img class="mr10" src="../img/map.png" style="width: .25rem;cursor: pointer;"> <span class="address">南城</span> </p> </ul> <img src="../img/navigation.png" style="width: 0.6rem;"> </li>  -->
+    </div>
+    <!-- 扫一扫 &&列表-->
+    <div id="tool">
+        <p class="getlocal"><img src="../img/location.png" style="width: .66rem;"></p>
+        <div id="scanQRCode1"><img src="../img/saoCode.png" style="width: 3.66rem;"></div>
+    </div>
+</body>
+
+</html>
+<script src="../js/jquery-3.2.1.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/dlc.js" type="text/javascript" charset="utf-8"></script>
+<script charset="utf-8" src="http://map.qq.com/api/js?v=2.exp"></script>
+<script type="text/javascript" src="https://3gimg.qq.com/lightmap/components/geolocation/geolocation.min.js"></script>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script src="https://gw.alipayobjects.com/as/g/h5-lib/alipayjsapi/3.1.0/alipayjsapi.inc.min.js"></script>
+<script>
+var geolocation = new qq.maps.Geolocation("N6RBZ-AJN35-AACI2-Q2ICF-HYV6O-JRBBZ", "myapp");
+var positionNum = 0;
+var onOff = 0;
+var options = {
+    timeout: 2000
+};
+
+function showPosition(position) {
+    positionNum++;
+    position;
+    lat = position.lat;
+    lng = position.lng;
+    console.log('具体地址：' + position.addr + '经度：' + lat + '纬度' + lng);
+    var center = new qq.maps.LatLng(lat, lng);
+    var map = new qq.maps.Map(document.getElementById('container'), {
+        center: center,
+        zoom: 13,
+        //              zoomControl: false,
+        draggable: true, //手势控制, 用来设置地图是否能够鼠标拖拽，默认值为“可以”；
+        scrollwheel: true, //用来配置地图是否能够通过鼠标滚轮操作进行放大，默认值为“可以”；
+        disableDoubleClickZoom: false // 用来配置地图是否可以通过鼠标双击进行放大，默认值为“可以”。
+    });
+
+    //创建marker
+    var marker = new qq.maps.Marker({
+        position: center,
+        map: map
+    });
+
+    //自定义标注图标
+    var anchor = new qq.maps.Point(55, 55),
+        size = new qq.maps.Size(110, 110),
+        origin = new qq.maps.Point(0, 0),
+        markerIcon = new qq.maps.MarkerImage(
+            "../img/ic_location.png",
+            size,
+            origin,
+            anchor
+        );
+    marker.setIcon(markerIcon);
+
+
+    // var res=[{'lng':'113.722975','lat':'22.99319','name':'1'},{'lng':'113.732531','lat':'22.992653','name':'2'},{'lng':'113.744175','lat':'22.998912','name':'3'}];
+
+    dlc_request('Wxsite/Massage/api', { api_name: 'site', lat: lat, lng: lng }, function(res) {
+        console.log(res)
+        for (var i in res.data) {
+            var logo1 = new qq.maps.LatLng(res.data[i].lat, res.data[i].lng);
+            //创建marker
+            var logo = new qq.maps.Marker({
+                position: logo1,
+                map: map
+            });
+            //自定义标注图标
+            var anchor = new qq.maps.Point(48, 55.5),
+                size = new qq.maps.Size(96, 101),
+                origin = new qq.maps.Point(0, 0),
+                markerIcon = new qq.maps.MarkerImage(
+                    "../img/logo.png",
+                    size,
+                    origin,
+                    anchor
+                );
+            logo.setIcon(markerIcon);
+
+            //设置属性
+            logo.name = res.data[i].name;
+            logo.address = res.data[i].address;
+            logo.lat = res.data[i].lat;
+            logo.lng = res.data[i].lng;
+            //console.log(logo.name)
+
+            //获取标记的点击事件
+            qq.maps.event.addListener(logo, 'click', function(e) {
+                console.log(this.name + ',' + this.address) //获取属性
+                $('.mBox').html('<li class="location flex_a flex-sb p30" data-lat="' + this.lat + '"data-lng="' + this.lng + '" data-address="' + this.address + '" data-name="' + this.name + '"> <ul> <h3 class="font16 name">' + this.name + '</h3> <p class="mt30 font14 flex_a"><img class="mr10" src="../img/map.png" style="width: .25rem;cursor: pointer;"> <span class="address">' + this.address + '</span> </p> </ul> <img src="../img/navigation.png" style="width: 0.6rem;"> </li> ')
+            });
+            $('.mBox').show();
+        }
+    })
+
+
+
+    //获取当前位置
+    $('.getlocal').click(function() {
+        location.href = 'y_map_list.html?lat=' + lat + '&lng=' + lng + '&ticket=' + localStorage.getItem("ticket")
+    })
+
+}
+
+function showErr() {
+    positionNum++;
+    console.log('定位失败！');
+    setInterval(function() {
+        geolocation.getLocation(showPosition, showErr, options);
+    }, 5000)
+};
+geolocation.getLocation(showPosition, showErr, options);
+if (getUrlParam('status') == 1) {
+    dlctipbox.show('设备未安装');
+} else if (getUrlParam('status') == 3) {
+    dlctipbox.show('设备使用中');
+} else if (getUrlParam('status') == 4) {
+    dlctipbox.show('设备有故障');
+} else if (getUrlParam('status') == 5) {
+    dlctipbox.show('设备离线');
+} else if (getUrlParam('status') == undefined || getUrlParam('status') == '') {} else {
+    dlctipbox.show('未知问题');
+}
+</script>
+<script language="javascript">
+$.ajax({
+    type: "POST",
+    url: dlcUrl() + "Wxsite/Cash/api",
+    dataType: 'json',
+    data: { api_name: 'getTicket' },
+    success: function(data) {
+        console.log(data);
+        // dlctipbox.clear();
+        if (data.code == 1) {
+            var ticket = data.data.ticket;
+            var timestamp = (new Date().getTime() / 1000).toFixed(0);
+            var nonceStr = Math.random().toString(36).substr(2);
+            var tickets = wx_js(data.data.ticket, timestamp, nonceStr);
+            localStorage.setItem("ticket", ticket)
+            wx.config({
+                debug: false, // 开启调试模式,调用的所有api的返回值会在客户端//alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+                appId: 'wx14c6b5d27daad538', // 必填，公众号的唯一标识
+                timestamp: timestamp, // 必填，生成签名的时间戳
+                nonceStr: nonceStr, // 必填，生成签名的随机串
+                signature: tickets, // 必填，签名，见附录1
+                jsApiList: ['checkJsApi',
+                    'onMenuShareTimeline',
+                    'onMenuShareAppMessage',
+                    'onMenuShareQQ',
+                    'onMenuShareWeibo',
+                    'hideMenuItems',
+                    'showMenuItems',
+                    'hideAllNonBaseMenuItem',
+                    'showAllNonBaseMenuItem',
+                    'translateVoice',
+                    'startRecord',
+                    'stopRecord',
+                    'onRecordEnd',
+                    'playVoice',
+                    'pauseVoice',
+                    'stopVoice',
+                    'uploadVoice',
+                    'downloadVoice',
+                    'chooseImage',
+                    'previewImage',
+                    'uploadImage',
+                    'downloadImage',
+                    'getNetworkType',
+                    'openLocation',
+                    'getLocation',
+                    'hideOptionMenu',
+                    'showOptionMenu',
+                    'closeWindow',
+                    'scanQRCode',
+                    'chooseWXPay',
+                    'openProductSpecificView',
+                    'addCard',
+                    'chooseCard',
+                    'openCard'
+                ] // 必填，需要使用的JS接口列表，所有JS接口列表见附录2
+            });
+            if (isWeiXin()) {
+                wx.ready(function() {
+                    $('#scanQRCode1').click(function() {
+                        if (onOff) return false;
+                        // onOff = 1;
+                        // dlctipbox.loading();
+                        wx.scanQRCode({
+                            needResult: 0, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
+                            scanType: ["qrCode", "barCode"], // 可以指定扫二维码还是一维码，默认二者都有
+                            // onOff = 0;
+                            success: function(res) {
+                                console.log(res)
+                                //                                  location.href =res.resultStr; // 当needResult 为 1 时，扫码返回的结果
+
+                            },
+                            error: function(err) {
+                                // dlctipbox.clear();
+                                alert('出错了');
+                            }
+                        });
+                    })
+                })
+            } else {
+                var btnScanQR = document.querySelector('#scanQRCode1');
+                btnScanQR.addEventListener('click', function() {
+                    ap.scan(function(res) {
+                        ap.alert(res.code);
+                    });
+                });
+            }
+        }
+    }
+});
+console.log(localStorage.getItem("ticket"));
+$('.mBox').on('click', 'li', function() {
+    // console.log(111);
+    var that = $(this);
+    console.log(that.data('lat'))
+    wx.openLocation({
+        latitude: that.data('lat'),
+        longitude: that.data('lng'),
+        name: that.data('name'),
+        address: that.data('address'),
+        scale: 14,
+        infoUrl: ''
+    });
+
+})
+
+function wx_js(signature, timestamp, nonceStr) {
+    var e = decodeURIComponent('jsapi_ticket=' + signature + '&noncestr=' + nonceStr + '&timestamp=' + timestamp + '&url=' + location.href.split("#")[0]),
+        s = new jsSHA(e, "TEXT"),
+        signature = s.getHash("SHA-1", "HEX");
+    return signature;
+}
+//alert(wx_js())
+</script>

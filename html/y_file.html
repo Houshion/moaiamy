@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>健康档案</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-
+scale=1, user-scalable=no">
+    <link rel="stylesheet" type="text/css" href="../css/swiper.min.css" />
+    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+    <script type="text/javascript" src="../js/adaptive.js"></script>
+    <script>
+    window['adaptive'].desinWidth = 750;
+    window['adaptive'].baseFont = 28;
+    window['adaptive'].init();
+    </script>
+</head>
+<style type="text/css">
+	body,html{
+		background: #fff;
+	}
+	.type1 {
+	    color: #5be9bc
+	}
+	
+	.type2 {
+	    color: #f9ea96
+	}
+	
+	.type3 {
+	    color: #f68595
+	}
+	
+	.menu ul {
+	    border: 1px solid #dadada;
+	    border-radius: 4px;
+	    margin: .2rem 0;
+	}
+	
+	.menu span {
+	    color: #ccc;
+	    width: 1.6rem;
+	    height: .7rem;
+	    display: inline-block;
+	    text-align: center;
+	    line-height: .7rem;
+	}
+	
+	.menu span.active {
+	    background: #ffa795;
+	    color: #fff;
+	}
+	
+	.menu span:not(:last-child) {
+	    border-right: 1px solid #dadada;
+	}
+	/*健康分析列表*/
+	
+	.file_list {
+	    padding: .2rem 0.3rem;
+	    box-shadow: 0 0 10px rgba(0, 0, 0, .2);
+	    margin-top: 0.2rem;
+	}
+</style>
+
+<body style="display: none;">
+    <div class="bigBox bw">
+        <div class="flex menu">
+            <ul class="flex">
+                <!-- <span class="active">日</span> -->
+                <span class="active">周</span>
+                <span>月</span>
+            </ul>
+        </div>
+        <div class="container">
+            <!-- echart -->
+            <div id="viewShowMain" class="plr24 mt20" style="height: 6rem;"></div>
+            <ul class="plr24" style="padding-bottom: 0.2rem;">
+                <!-- 表格列表 -->
+                <div class="e_chart"></div>
+                <p class="tac font16">健康分析</p>
+                <p class="mt20 health_analyze">
+                    <!-- 本周内连续多次出现重度疲劳,颈肩部酸痛指数超标,有肩 周炎病症状,请注意调理 -->
+                </p>
+                <ul class="list">
+                   <!--           <li class="plr24 file_list">
+                        <p class="bold">11月10日 星期五</p>
+                        <div class="flex_a flex-sb">
+                            <div class="flex flex-column w50 bdr">
+                                <p class="font20 type2 mt10">中度</p>
+                                <p class="mt20 col9">疲劳值</p>
+                            </div>
+                            <div class="flex flex-column w50">
+                                <p class="font20 type1 mt10">轻度</p>
+                                <p class="mt20 col9">酸痛值</p>
+                            </div>
+                        </div>
+                    </li> -->
+                </ul>
+            </ul>
+        </div>
+    </div>
+</body>
+
+</html>
+<script src="../js/jquery-3.2.1.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/dlc.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/swiper.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/echarts.min.js" type="text/javascript" charset="utf-8"></script>
+<!--公司的常用函数封装-->
+<script>
+    // 判断是否有健康档案
+    dlc_request('Wxsite/home/index',{ api_name: 'getUser' },function (res) {
+        console.log(res);
+        if (res.code == 1) {
+            res.data.is_info==2?location.href="y_no_file.html":$('body').show();
+        }
+    })
+var data1, data2, data3;
+$(function() {
+    // 表格部分
+    function echart(data1, data2, data3) {
+        var myChart = echarts.init(document.getElementById('viewShowMain'));
+
+        option = {
+            title: {
+                text: '亚健康度'
+            },
+            tooltip: {
+                trigger: 'axis'
+            },
+            legend: {
+                data: ['疲劳指数', '酸痛指数'],
+                // right: 30,
+                // top: 0,
+                // orient: 'vertical',
+            },
+            grid: {
+                left: '5%',
+                right: '20%',
+                bottom: '18%',
+                containLabel: false
+            },
+            xAxis: {
+                boundaryGap: false,
+                data: data3,
+            },
+            yAxis: {
+                type: 'value',
+                axisLabel: {
+                    formatter: '{value}',
+
+                },
+                axisLine: {
+                    lineStyle: { color: '#D9D9D9' }
+                },
+                splitLine: {
+                    lineStyle: {
+                        color: 'rgba(255,255,255,0.8)'
+                    }
+                },
+                boundaryGap: false,
+                data: ['0', '1', '2', '3', '4', '5','6','7','8']
+            },
+            dataZoom: [{
+                type: 'inside',
+                start: 0,
+                end: 75,
+            }, {
+                start: 100,
+                end: 100,
+                handleIcon: 'M10.7,11.9v-1.3H9.3v1.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4v1.3h1.3v-1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7V23h6.6V24.4z M13.3,19.6H6.7v-1.4h6.6V19.6z',
+                handleSize: '80%',
+                handleStyle: {
+                    color: '#fff',
+                    shadowBlur: 3,
+                    shadowColor: 'rgba(0, 0, 0, 0.5)',
+                    shadowOffsetX: 2,
+                    shadowOffsetY: 2
+                }
+            }],
+            series: [{
+                    name: '疲劳指数',
+                    type: 'line',
+                    "itemStyle": {
+                        "normal": {
+                            "color": "rgba(0,165,255,1)",
+                        }
+                    },
+                    label: {
+                        normal: {
+                            show: true,
+                            color: '#000',
+                            position: 'top'
+                        }
+                    },
+                    data: data1,
+
+                },
+                {
+                    name: '酸痛指数',
+                    type: 'line',
+                    "itemStyle": {
+                        "normal": {
+                            "color": "rgba(136,171,218,1)",
+                        }
+                    },
+                    label: {
+                        normal: {
+                            show: true,
+                            color: '#000',
+                            position: 'top'
+                        }
+                    },
+                    data: data2,
+
+                }
+            ]
+        };
+        myChart.setOption(option);
+    }
+    type(2)
+    // tab切换
+        $('.menu span').click(function() {
+			$(this).addClass('active').siblings().removeClass('active');
+            type($(this).index() +2)
+        })
+    function type(type) {
+        // $('.list').children().remove()
+        // $('.list').append(type == 1 ? '<li data-money="10" data-type="pay">111</li>' : type == 2 ? '<li data-money="" data-type="comment">222</li>' : '<li data-money="" data-type="">333</li>')
+        // 表格接口
+        $.ajax({
+            type: 'POST',
+            data: { api_name: 'healthStatistics',type:type},
+            url: dlcUrl() + 'Wxsite/Health/api/',
+            dataType: 'json',
+            success: function(res) {
+                console.log(res)
+                if (res.code == 1) {
+                    data1 = res.data.total.join(',').replace(/0/g,'').split(',');
+                    data2 = res.data.ache.join(',').replace(/0/g,'').split(',');
+                    data3 = res.data.date;
+                    echart(data1, data2, data3)
+                    $('.health_analyze').html(escape2Html(res.data.health_analyze.text));
+                    // $('.health_analyze').html(res.data.health_analyze.text);
+                    if (res.data.health_record.length == 0) {
+                        $('.list').html(emptyTip('暂无信息'))
+                    } else {
+                        var h = ''
+                        var a = res.data.health_record;
+                        for (i in a) {
+                            h += '<li class="plr24 file_list">' +
+                                '<p class="bold">' + a[i].ctime + '</p>' +
+                                '<div class="flex_a flex-sb">' +
+                                '<div class="flex flex-column w50 bdr">' +
+                                '<p class="font20 type2 mt10">疲劳值</p>' +
+                                '<p class="mt20 col9">'+a[i].tired+'</p>' +
+                                '</div>' +
+                                '<div class="flex flex-column w50">' +
+                                '<p class="font20 type1 mt10">酸痛值</p>' +
+                                '<p class="mt20 col9">'+a[i].ache+'</p>' +
+                                '</div>' +
+                                '</div>' +
+                                '</li>'
+                        }
+                        // console.log(h )
+                        $('.list').html(h);
+                    }
+                }
+            }
+        })
+    }
+
+})
+</script>

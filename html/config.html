@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>加载中...</title>
+		<style>
+			img{
+				margin: 30% auto;
+			    display: block;
+			    width: 64%;
+			}
+		</style>
+	</head>
+	<body>
+		<img src="../img/loading.gif"/>
+	</body>
+</html>
+<script type="text/javascript" src="../js/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="../js/dlc.js"></script>
+<script type="text/javascript">
+	$(function(){
+    dlc_request('Wxsite/home/index', { api_name: 'getUser' }, function(res) {
+        console.log(res)
+        if(res.code=='1'){
+        	//判断是否有绑定手机
+	        if(res.data.mobile){
+	        	//判断是否有健康档案
+    			if(res.data.is_info==1){
+        			location.replace('y_file.html');
+    			}else{
+    				location.replace('y_no_file.html');
+    			}
+	        }else{
+	        	location.replace('y_bind_phone.html?type==1&is_info='+res.data.is_info+')');
+	        }
+        }
+    })
+
+	})
+</script>

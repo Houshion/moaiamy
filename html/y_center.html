@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>个人中心</title>
+    <meta name="keywords" content="">
+    <meta name="description" content="">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-
+scale=1, user-scalable=no">
+    <link rel="stylesheet" type="text/css" href="../css/swiper.min.css" />
+    <link rel="stylesheet" type="text/css" href="../css/common.css" />
+    <script type="text/javascript" src="../js/adaptive.js"></script>
+    <script>
+    window['adaptive'].desinWidth = 750;
+    window['adaptive'].baseFont = 28;
+    window['adaptive'].init();
+    </script>
+    <style>
+    .top {
+        height: 3.2rem;
+        background-size: cover;
+    }
+
+    .banner {
+        position: relative;
+        height: 4.5rem;
+    }
+
+    .bg_img {
+        width: 100%;
+        height: 100%;
+    }
+
+    .a_innerbox {
+        position: absolute;
+        left: calc(50% - 25%);
+        top: calc(50% - 25%);
+        width: 50%;
+        height: 50%;
+        text-align: center;
+    }
+
+    .flex-column {
+        flex-direction: column;
+    }
+
+    .filter {
+        -webkit-filter: blur(0.04rem);
+        -moz-filter: blur(0.04rem);
+        -o-filter: blur(0.04rem);
+        -ms-filter: blur(0.04rem);
+        filter: blur(0.04rem);
+    }
+
+    .menu-icon {
+        height: 0.18rem;
+        width: auto;
+    }
+
+    .avatar_person {
+        width: 1.82rem;
+        height: 1.82rem;
+        border-radius: 50%;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    }
+    </style>
+</head>
+
+<body>
+    <!-- banner -->
+    <div class="banner w100" style="overflow: hidden;">
+        <!--   <a class="flex-center p4 br-circle" href="y_info.html"> 
+            <img class="filter bg_img avatar head_img" src="../img/9.png">
+        <div class="a_innerbox flex flex-column">
+            
+              <img src="../img/9.png" alt="" class="avatar avatar_person br-circle head_img">  
+            <span class="nickname colw mt20">勇仔</span>
+        </div>
+         </a> -->
+    </div>
+    <!-- 列表详情 -->
+    <ul class="mt20">
+        <a href="y_wallet.html" class="flex_a flex-sb bdb bw p30">
+           我的钱包
+           <img src="../img/arrow_right_1.png" style="width: .15rem">
+        </a>
+        <a href="y_detail.html?type=2" class="flex_a flex-sb bdb bw p30">
+           订单信息
+           <img src="../img/arrow_right_1.png" style="width: .15rem">
+        </a>
+        <a class="flex_a flex-sb bdb bw p30" id="dataFile">
+           健康档案
+           <img src="../img/arrow_right_1.png" style="width: .15rem">
+        </a>
+        <a href="y_about.html" class="flex_a flex-sb bdb bw p30">
+           关于我们
+           <img src="../img/arrow_right_1.png" style="width: .15rem">
+        </a>
+        <a  class="flex_a flex-sb bdb bw p30" id="keFu">
+           客服电话
+           <span class="col9"></span>
+       </a>
+    </ul>
+
+</body>
+
+</html>
+<script src="../js/jquery-3.2.1.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/dlc.js" type="text/javascript" charset="utf-8"></script>
+<script src="../js/swiper.min.js" type="text/javascript" charset="utf-8"></script>
+<script src="https://gw.alipayobjects.com/as/g/h5-lib/alipayjsapi/3.1.0/alipayjsapi.inc.min.js"></script>
+
+<script>
+  var btnScanQR = document.querySelector('#J_btn_scanQR');
+  var btnScanBAR = document.querySelector('#J_btn_scanBAR');
+  btnScanQR.addEventListener('click', function(){
+    ap.scan(function(res){
+      ap.alert(res.code);
+    });
+  });
+  btnScanBAR.addEventListener('click', function(){
+    ap.scan({
+      type: 'bar'
+    }, function(res){
+      ap.alert(res.code);
+    });
+  });
+</script>
+<!--公司的常用函数封装-->
+<script>
+$(function() {
+    addEventback();
+    $.ajax({
+        type: "POST",
+        data: { api_name: 'getUser' },
+        url: dlcUrl() + "Wxsite/home/index",
+        dataType: "json",
+        success: function(res) {
+            if (res.code == '1') {
+                console.log(res)
+                $('.banner').append(' <a class="flex-center p4 br-circle" href="y_info.html"> ' +
+                    '<img class="filter bg_img avatar head_img" src="' + res.data.head_img+'">' +
+                    '<div class="a_innerbox flex flex-column">' +
+                    ' <img src="' + res.data.head_img+'" alt="" class="avatar avatar_person br-circle head_img">' +
+                    '<span class="nickname colw mt20">' + res.data.nickname + '</span>' +
+                    '</div>' +
+                    '</a>')
+              localStorage.setItem("user_id", res.data.user_id);
+               $('#keFu').attr('href','tel:'+res.data.kfphone);
+              // $('#keFu').attr('href','tel:'+res.data.kfphone).children().text(res.data.kfphone);
+              // console.log(localStorage.getItem("user_id"))
+              $('#dataFile').click(function(){
+		        	//判断是否有绑定手机
+			        if(res.data.mobile){
+			        	//判断是否有健康档案
+		    			if(res.data.is_info==1){
+		        			location.href='y_file.html';
+		    			}else{
+		    				location.href='y_no_file.html';
+		    			}
+			        }else{
+			        	location.href='y_bind_phone.html?type==1&is_info='+res.data.is_info+')';
+			        }
+              })
+              
+              
+            } else {
+                dlctipbox.show(res.msg);
+            }
+        },
+        error: function(error) {
+            console.log(error)
+            dlctipbox.show('网络异常,请刷新');
+        }
+    });
+})
+</script>
